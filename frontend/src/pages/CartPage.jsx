@@ -1,190 +1,242 @@
-import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext.jsx";
 
 function CartPage() {
-    const { cartItems, total, removeFromCart, updateQuantity } = useCart();
-    const BASEURL = import.meta.env.VITE_DJANGO_BASE_URL;
+    const {
+        cartItems,
+        total,
+        removeFromCart,
+        updateQuantity,
+    } = useCart();
 
     return (
-        <div className="pt-28 min-h-screen bg-[#C0E6ED] px-4 py-10">
-            <div className="max-w-6xl mx-auto lg:mr-96">
+        <div className="min-h-screen bg-[#2A1B3D] pt-28 pb-16 px-4 sm:px-6">
 
-                {/* Page Heading */}
-                <div className="text-center mb-10">
-                    <p className="text-sm font-semibold tracking-[0.25em] uppercase text-[#C45B75] mb-2">
+            {/* Background glow */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-20 left-10 w-72 h-72 bg-[#44318D] opacity-20 blur-3xl rounded-full" />
+                <div className="absolute bottom-10 right-10 w-72 h-72 bg-[#D83F87] opacity-15 blur-3xl rounded-full" />
+            </div>
+
+            <div className="relative max-w-6xl mx-auto">
+
+                {/* Header */}
+                <div className="mb-10">
+                    <p className="text-sm font-semibold tracking-[0.25em] uppercase text-[#E98074]">
                         Your Shopping Bag
                     </p>
 
-                    <h1 className="text-4xl font-bold text-slate-800">
-                        Your Cart 🛒
+                    <h1 className="text-4xl md:text-5xl font-bold text-white mt-3">
+                        Your Cart
                     </h1>
 
-                    <p className="text-slate-600 mt-2">
-                        Review your items before checkout
+                    <p className="text-[#A4B3B6] mt-3">
+                        Review your products before checking out.
                     </p>
                 </div>
 
                 {cartItems.length === 0 ? (
-                    /* Empty Cart */
-                    <div className="bg-[#FFFDF8] rounded-3xl shadow-xl p-10 text-center max-w-2xl mx-auto">
+
+                    /* Empty cart */
+                    <div className="bg-[#44318D]/40 border border-[#A4B3B6]/20 rounded-3xl p-12 text-center backdrop-blur-sm">
                         <div className="text-6xl mb-5">
-                            🛍️
+                            🛒
                         </div>
 
-                        <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                        <h2 className="text-2xl font-bold text-white mb-3">
                             Your cart is empty
                         </h2>
 
-                        <p className="text-slate-500 mb-7">
-                            Looks like you haven't added anything yet.
+                        <p className="text-[#A4B3B6] mb-7">
+                            Discover something you love and add it to your cart.
                         </p>
 
                         <Link
                             to="/"
-                            className="inline-block bg-[#FBB7C7] text-slate-800 px-7 py-3 rounded-xl font-semibold shadow-md hover:bg-[#C45B75] hover:text-white hover:shadow-lg transition-all duration-300"
+                            className="inline-block bg-[#D83F87] text-white px-7 py-3 rounded-xl font-semibold shadow-lg hover:bg-[#E98074] hover:scale-105 transition-all duration-300"
                         >
-                            Continue Shopping
+                            Explore Products →
                         </Link>
                     </div>
+
                 ) : (
-                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-                        {/* Cart Items */}
-                        <div className="xl:col-span-2 bg-[#FFFDF8] rounded-3xl shadow-xl p-5 md:p-7">
+                    <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
 
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-2xl font-bold text-slate-800">
-                                    Cart Items
-                                </h2>
+                        {/* Cart items */}
+                        <div className="space-y-5">
 
-                                <span className="bg-[#FAD9D5] text-[#C45B75] px-4 py-2 rounded-full text-sm font-semibold">
-                                    {cartItems.length} item{cartItems.length !== 1 ? "s" : ""}
-                                </span>
-                            </div>
+                            {cartItems.map((item) => {
 
-                            <div className="space-y-5">
-                                {cartItems.map((item) => (
+                                const price = Number(
+                                    item?.product_price ??
+                                    item?.product?.price ??
+                                    item?.price ??
+                                    0
+                                );
+
+                                const quantity = Number(
+                                    item?.quantity ?? 1
+                                );
+
+                                const image =
+                                    item?.product_image ||
+                                    item?.product?.image;
+
+                                const imageUrl = image
+                                    ? image.startsWith("http")
+                                        ? image
+                                        : `${import.meta.env.VITE_DJANGO_BASE_URL}${image}`
+                                    : null;
+
+                                return (
                                     <div
                                         key={item.id}
-                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-b border-slate-200 pb-5 last:border-b-0"
+                                        className="bg-[#44318D]/40 border border-[#A4B3B6]/20 rounded-2xl p-4 sm:p-5 backdrop-blur-sm hover:border-[#D83F87]/50 transition-all duration-300"
                                     >
-                                        {/* Product */}
-                                        <div className="flex items-center gap-4">
-                                            {item.product_image && (
-                                                <div className="w-24 h-24 rounded-2xl overflow-hidden bg-[#FCE6D3] shrink-0">
+
+                                        <div className="flex flex-col sm:flex-row gap-5">
+
+                                            {/* Product image */}
+                                            <div className="w-full sm:w-32 h-32 rounded-xl overflow-hidden bg-[#2A1B3D] flex-shrink-0">
+
+                                                {imageUrl ? (
                                                     <img
-                                                        src={`${BASEURL}${item.product_image}`}
+                                                        src={imageUrl}
                                                         alt={item.product_name}
                                                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                                                     />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-3xl">
+                                                        🛍️
+                                                    </div>
+                                                )}
+
+                                            </div>
+
+                                            {/* Product information */}
+                                            <div className="flex-1 flex flex-col justify-between">
+
+                                                <div>
+                                                    <h2 className="text-xl font-semibold text-white">
+                                                        {item.product_name}
+                                                    </h2>
+
+                                                    <p className="text-[#E98074] font-bold text-lg mt-2">
+                                                        ₹{price.toFixed(2)}
+                                                    </p>
                                                 </div>
-                                            )}
 
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-slate-800">
-                                                    {item.product_name}
-                                                </h3>
+                                                <div className="flex flex-wrap items-center justify-between gap-4 mt-5">
 
-                                                <p className="text-[#C45B75] font-bold mt-1">
-                                                    ₹{item.product_price}
-                                                </p>
+                                                    {/* Quantity controls */}
+                                                    <div className="flex items-center bg-[#2A1B3D] border border-[#A4B3B6]/20 rounded-xl overflow-hidden">
+
+                                                        <button
+                                                            onClick={() =>
+                                                                updateQuantity(
+                                                                    item.id,
+                                                                    quantity - 1
+                                                                )
+                                                            }
+                                                            className="w-10 h-10 text-white text-xl hover:bg-[#D83F87] transition"
+                                                        >
+                                                            −
+                                                        </button>
+
+                                                        <span className="w-10 text-center text-white font-semibold">
+                                                            {quantity}
+                                                        </span>
+
+                                                        <button
+                                                            onClick={() =>
+                                                                updateQuantity(
+                                                                    item.id,
+                                                                    quantity + 1
+                                                                )
+                                                            }
+                                                            className="w-10 h-10 text-white text-xl hover:bg-[#D83F87] transition"
+                                                        >
+                                                            +
+                                                        </button>
+
+                                                    </div>
+
+                                                    {/* Remove */}
+                                                    <button
+                                                        onClick={() =>
+                                                            removeFromCart(item.id)
+                                                        }
+                                                        className="text-[#E98074] hover:text-white hover:bg-[#E98074]/20 px-4 py-2 rounded-lg transition"
+                                                    >
+                                                        Remove
+                                                    </button>
+
+                                                </div>
+
                                             </div>
+
                                         </div>
 
-                                        {/* Quantity + Remove */}
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex items-center bg-[#FAD9D5] rounded-xl overflow-hidden">
-                                                <button
-                                                    className="w-9 h-9 text-slate-700 font-bold hover:bg-[#FBB7C7] transition"
-                                                    onClick={() =>
-                                                        updateQuantity(
-                                                            item.id,
-                                                            item.quantity - 1
-                                                        )
-                                                    }
-                                                >
-                                                    −
-                                                </button>
-
-                                                <span className="w-9 text-center font-semibold text-slate-800">
-                                                    {item.quantity}
-                                                </span>
-
-                                                <button
-                                                    className="w-9 h-9 text-slate-700 font-bold hover:bg-[#FBB7C7] transition"
-                                                    onClick={() =>
-                                                        updateQuantity(
-                                                            item.id,
-                                                            item.quantity + 1
-                                                        )
-                                                    }
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
-
-                                            <button
-                                                className="text-sm font-semibold text-[#C45B75] hover:text-red-600 transition"
-                                                onClick={() =>
-                                                    removeFromCart(item.id)
-                                                }
-                                            >
-                                                Remove
-                                            </button>
-                                        </div>
                                     </div>
-                                ))}
-                            </div>
+                                );
+                            })}
+
                         </div>
 
-                        {/* Order Summary */}
-                        <div className="bg-[#FCE6D3] rounded-3xl shadow-xl p-6 h-fit">
-                            <p className="text-sm font-semibold tracking-[0.2em] uppercase text-[#C45B75] mb-2">
-                                Summary
-                            </p>
+                        {/* Order summary */}
+                        <div className="lg:sticky lg:top-28 h-fit">
 
-                            <h2 className="text-2xl font-bold text-slate-800 mb-6">
-                                Order Summary
-                            </h2>
+                            <div className="bg-[#44318D]/50 border border-[#A4B3B6]/20 rounded-3xl p-6 sm:p-7 backdrop-blur-sm shadow-2xl">
 
-                            <div className="flex justify-between text-slate-600 mb-4">
-                                <span>Subtotal</span>
-                                <span>₹{total.toFixed(2)}</span>
+                                <p className="text-sm font-semibold tracking-[0.2em] uppercase text-[#E98074]">
+                                    Order Summary
+                                </p>
+
+                                <h2 className="text-2xl font-bold text-white mt-2 mb-7">
+                                    Ready to checkout?
+                                </h2>
+
+                                <div className="flex justify-between text-[#A4B3B6] mb-4">
+                                    <span>Items</span>
+                                    <span>{cartItems.length}</span>
+                                </div>
+
+                                <div className="border-t border-[#A4B3B6]/20 pt-5 mt-5">
+
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-white font-semibold">
+                                            Total
+                                        </span>
+
+                                        <span className="text-2xl font-bold text-[#D83F87]">
+                                            ₹{Number(total).toFixed(2)}
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                <Link
+                                    to="/checkout"
+                                    className="block text-center w-full bg-[#D83F87] text-white px-6 py-3.5 rounded-xl font-semibold mt-7 shadow-lg hover:bg-[#E98074] hover:scale-[1.02] transition-all duration-300"
+                                >
+                                    Proceed to Checkout →
+                                </Link>
+
+                                <Link
+                                    to="/"
+                                    className="block text-center w-full border border-[#44318D] text-[#A4B3B6] px-6 py-3 rounded-xl font-semibold mt-3 hover:bg-[#44318D] hover:text-white transition-all duration-300"
+                                >
+                                    ← Continue Shopping
+                                </Link>
+
                             </div>
 
-                            <div className="flex justify-between text-slate-600 mb-5">
-                                <span>Delivery</span>
-                                <span className="text-[#C45B75] font-semibold">
-                                    Free
-                                </span>
-                            </div>
-
-                            <div className="border-t border-slate-300 pt-5 flex justify-between items-center">
-                                <span className="text-lg font-bold text-slate-800">
-                                    Total
-                                </span>
-
-                                <span className="text-2xl font-bold text-[#C45B75]">
-                                    ₹{total.toFixed(2)}
-                                </span>
-                            </div>
-
-                            <Link
-                                to="/checkout"
-                                className="block text-center mt-7 bg-[#FBB7C7] text-slate-800 px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-[#C45B75] hover:text-white hover:shadow-lg transition-all duration-300"
-                            >
-                                Proceed to Checkout →
-                            </Link>
-
-                            <Link
-                                to="/"
-                                className="block text-center mt-4 text-sm font-semibold text-[#C45B75] hover:underline"
-                            >
-                                ← Continue Shopping
-                            </Link>
                         </div>
+
                     </div>
                 )}
+
             </div>
         </div>
     );

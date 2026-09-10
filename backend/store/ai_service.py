@@ -82,7 +82,7 @@ If action is "none", product_id must be null.
 """
 
     response = client.models.generate_content(
-        model="gemini-3-flash-preview",
+        model="gemini-3.6-flash",
         contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json"
