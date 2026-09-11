@@ -231,18 +231,27 @@ class Command(BaseCommand):
 
         added_count = 0
         image_count = 0
+        category_count = 0
 
         for item in products:
 
-            # Create the category automatically if it does not exist
-            category, _ = Category.objects.get_or_create(
+            # Create category automatically if it does not exist
+            category, category_created = Category.objects.get_or_create(
                 name=item["category"],
                 defaults={
                     "slug": item["category"].lower().replace(" ", "-")
                 }
             )
 
-            # Create product if it does not already exist
+            if category_created:
+                category_count += 1
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"Category created: {category.name}"
+                    )
+                )
+
+            # Create product if it does not exist
             product, created = Product.objects.get_or_create(
                 name=item["name"],
                 defaults={
@@ -252,10 +261,11 @@ class Command(BaseCommand):
                 },
             )
 
-            # Update category/details for existing products as well
-            product.Category = category
-            product.description = item["description"]
-            product.price = item["price"]
+            # Make sure existing products also have the correct category/details
+            if not created:
+                product.Category = category
+                product.description = item["description"]
+                product.price = item["price"]
 
             # Assign unique image
             image_path = product_images.get(product.name)
@@ -279,15 +289,6 @@ class Command(BaseCommand):
                     )
                 )
 
-            else:
-                product.save(
-                    update_fields=[
-                        "Category",
-                        "description",
-                        "price",
-                    ]
-                )
-
             if created:
                 added_count += 1
 
@@ -299,7 +300,13 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"\nDone! Added {added_count} new products."
+                f"\nCategories created: {category_count}"
+            )
+        )
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Done! Added {added_count} new products."
             )
         )
 
