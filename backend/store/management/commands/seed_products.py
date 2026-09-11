@@ -234,10 +234,15 @@ class Command(BaseCommand):
 
         for item in products:
 
-            category = Category.objects.get(
-                name=item["category"]
+            # Create the category automatically if it does not exist
+            category, _ = Category.objects.get_or_create(
+                name=item["category"],
+                defaults={
+                    "slug": item["category"].lower().replace(" ", "-")
+                }
             )
 
+            # Create product if it does not already exist
             product, created = Product.objects.get_or_create(
                 name=item["name"],
                 defaults={
@@ -247,12 +252,24 @@ class Command(BaseCommand):
                 },
             )
 
-            # Update each product with its unique image
+            # Update category/details for existing products as well
+            product.Category = category
+            product.description = item["description"]
+            product.price = item["price"]
+
+            # Assign unique image
             image_path = product_images.get(product.name)
 
             if image_path:
                 product.image = image_path
-                product.save(update_fields=["image"])
+                product.save(
+                    update_fields=[
+                        "Category",
+                        "description",
+                        "price",
+                        "image",
+                    ]
+                )
 
                 image_count += 1
 
@@ -260,6 +277,15 @@ class Command(BaseCommand):
                     self.style.SUCCESS(
                         f"Image updated: {product.name}"
                     )
+                )
+
+            else:
+                product.save(
+                    update_fields=[
+                        "Category",
+                        "description",
+                        "price",
+                    ]
                 )
 
             if created:
