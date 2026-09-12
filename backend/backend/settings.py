@@ -172,6 +172,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5177",
     "http://localhost:5178",
     "http://localhost:5179",
+
+    "https://ai-shopping-assistant-rosy.vercel.app",
       
  
 ]
