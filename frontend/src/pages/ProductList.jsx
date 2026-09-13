@@ -32,14 +32,85 @@ function ProductList() {
     }, [BASEURL]);
 
     if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-[#C0E9ED]">
-                <p className="text-slate-700 text-lg font-medium">
-                    Loading products...
-                </p>
+    return (
+        <div className="min-h-screen bg-[#C0E9ED] pt-24 pb-12">
+
+            {/* Loading Hero */}
+            <div className="max-w-7xl mx-auto px-6 mb-12">
+                <div className="relative overflow-hidden bg-[#2A1B3D] rounded-3xl shadow-2xl min-h-[420px] flex items-center justify-center">
+
+                    {/* Animated glow */}
+                    <div className="absolute w-72 h-72 bg-[#D83F87]/20 rounded-full blur-3xl animate-pulse" />
+
+                    <div className="relative z-10 text-center px-6">
+
+                        <div className="inline-flex items-center gap-3 mb-6">
+                            <div className="w-3 h-3 bg-[#D83F87] rounded-full animate-pulse" />
+                            <p className="text-sm font-semibold tracking-[0.25em] text-[#E98074] uppercase">
+                                AI-Powered Shopping
+                            </p>
+                        </div>
+
+                        <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+                            Preparing your
+                            <br />
+                            shopping experience...
+                        </h1>
+
+                        <p className="text-[#A4B3B6] mt-5 text-base md:text-lg">
+                            Your products are loading. Just a moment.
+                        </p>
+
+                        {/* Loading animation */}
+                        <div className="flex justify-center gap-2 mt-8">
+                            <span className="w-2.5 h-2.5 bg-[#D83F87] rounded-full animate-bounce" />
+                            <span
+                                className="w-2.5 h-2.5 bg-[#E98074] rounded-full animate-bounce"
+                                style={{ animationDelay: "150ms" }}
+                            />
+                            <span
+                                className="w-2.5 h-2.5 bg-[#FAD9D5] rounded-full animate-bounce"
+                                style={{ animationDelay: "300ms" }}
+                            />
+                        </div>
+
+                    </div>
+                </div>
             </div>
-        );
-    }
+
+
+            {/* Product Skeletons */}
+            <div className="max-w-7xl mx-auto px-6">
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                    {[1, 2, 3, 4].map((item) => (
+                        <div
+                            key={item}
+                            className="bg-white rounded-2xl shadow-sm p-4 animate-pulse"
+                        >
+                            {/* Image skeleton */}
+                            <div className="h-56 rounded-xl bg-slate-200" />
+
+                            {/* Text skeleton */}
+                            <div className="pt-4">
+                                <div className="h-5 bg-slate-200 rounded w-3/4" />
+
+                                <div className="flex items-center justify-between mt-4">
+                                    <div className="h-5 bg-slate-200 rounded w-20" />
+                                    <div className="h-4 bg-slate-200 rounded w-24" />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                </div>
+
+            </div>
+
+        </div>
+    );
+}
 
     if (error) {
         return (
