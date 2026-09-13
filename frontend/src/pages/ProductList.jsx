@@ -18,7 +18,7 @@ function ProductList() {
             setLoadingStage((previousStage) => {
                 return previousStage < 3 ? previousStage + 1 : 3;
             });
-        }, 5000);
+        }, 6000);
 
         fetch(`${BASEURL}/api/products/`)
             .then((response) => {
