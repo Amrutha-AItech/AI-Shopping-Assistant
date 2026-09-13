@@ -18,7 +18,7 @@ function ProductList() {
             setLoadingStage((previousStage) => {
                 return previousStage < 3 ? previousStage + 1 : 3;
             });
-        }, 3000);
+        }, 5000);
 
         fetch(`${BASEURL}/api/products/`)
             .then((response) => {
@@ -213,17 +213,17 @@ function ProductList() {
     return (
         <div className="min-h-screen bg-[#C0E9ED] pt-24 pb-12">
 
-            {/* =================================================
+            {/* 
                 HERO / 3D SECTION
-            ================================================= */}
+            */}
 
             <div className="max-w-7xl mx-auto px-6 mb-12">
 
                 <div className="relative grid grid-cols-1 lg:grid-cols-2 items-center gap-8 bg-[#2A1B3D] rounded-3xl overflow-hidden shadow-2xl min-h-[520px]">
 
-                    {/* =================================================
+                    {/*
                         FULL HERO THREE.JS UNIVERSE BACKGROUND
-                    ================================================= */}
+                    */}
 
                     <div className="absolute inset-0 z-0 pointer-events-none">
 
@@ -289,9 +289,9 @@ function ProductList() {
                     </div>
 
 
-                    {/* =================================================
+                    {/* 
                         HERO TEXT
-                    ================================================= */}
+                     */}
 
                     <div className="relative z-10 px-8 py-12 lg:px-12 text-center lg:text-left">
 
@@ -335,9 +335,9 @@ function ProductList() {
                     </div>
 
 
-                    {/* =================================================
+                    {/* 
                         3D VISUAL
-                    ================================================= */}
+                    */}
 
                     <div className="relative z-10 flex items-center justify-center min-h-[460px] lg:min-h-[520px]">
 
@@ -350,9 +350,9 @@ function ProductList() {
             </div>
 
 
-            {/* =================================================
+            {/* 
                 PRODUCT GRID
-            ================================================= */}
+             */}
 
             <div
                 id="products"
