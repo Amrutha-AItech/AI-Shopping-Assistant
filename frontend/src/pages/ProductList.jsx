@@ -9,14 +9,16 @@ function ProductList() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [loadingStage, setLoadingStage] = useState(1);
+    const [loadingStage, setLoadingStage] = useState(0);
 
     const BASEURL = import.meta.env.VITE_DJANGO_BASE_URL;
 
     useEffect(() => {
-        const stageTimer = setTimeout(() => {
-            setLoadingStage(2);
-        }, 4000);
+        const stageTimer = setInterval(() => {
+            setLoadingStage((previousStage) => {
+                return previousStage < 3 ? previousStage + 1 : 3;
+            });
+        }, 3000);
 
         fetch(`${BASEURL}/api/products/`)
             .then((response) => {
@@ -35,8 +37,53 @@ function ProductList() {
                 setLoading(false);
             });
 
-        return () => clearTimeout(stageTimer);
+        return () => clearInterval(stageTimer);
     }, [BASEURL]);
+
+    const loadingMessages = [
+        {
+            icon: "✨",
+            title: (
+                <>
+                    Getting your
+                    <br />
+                    shopping experience ready
+                </>
+            ),
+            message:
+                "Loading products and connecting to your shopping assistant...",
+            status: "Preparing everything for you...",
+        },
+        {
+            icon: "🛍️",
+            title: <>Finding your products...</>,
+            message:
+                "Setting up your shopping experience so you can start exploring.",
+            status: "Almost ready...",
+        },
+        {
+            icon: "🤖",
+            title: (
+                <>
+                    Your shopping assistant
+                    <br />
+                    is almost ready
+                </>
+            ),
+            message:
+                "Connecting the pieces you need to start shopping smarter.",
+            status: "Getting things ready...",
+        },
+        {
+            icon: "🚀",
+            title: <>Almost there...</>,
+            message:
+                "Your AI-powered shopping experience is loading.",
+            status: "Just a few more seconds...",
+        },
+    ];
+
+    const currentMessage = loadingMessages[loadingStage];
 
     if (loading) {
         return (
@@ -62,31 +109,20 @@ function ProductList() {
 
                             </div>
 
-                            {loadingStage === 1 ? (
-                                <>
-                                    <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
-                                        ✨ Getting your
-                                        <br />
-                                        shopping experience ready
-                                    </h1>
+                            <h1
+                                key={loadingStage}
+                                className="text-3xl md:text-5xl font-bold text-white leading-tight"
+                            >
+                                {currentMessage.icon}{" "}
+                                {currentMessage.title}
+                            </h1>
 
-                                    <p className="text-[#A4B3B6] mt-5 text-base md:text-lg leading-relaxed max-w-lg mx-auto">
-                                        Loading products and connecting to your
-                                        shopping assistant...
-                                    </p>
-                                </>
-                            ) : (
-                                <>
-                                    <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
-                                        🛍️ Almost there...
-                                    </h1>
-
-                                    <p className="text-[#A4B3B6] mt-5 text-base md:text-lg leading-relaxed max-w-lg mx-auto">
-                                        Your AI-powered shopping experience is
-                                        loading.
-                                    </p>
-                                </>
-                            )}
+                            <p
+                                key={`message-${loadingStage}`}
+                                className="text-[#A4B3B6] mt-5 text-base md:text-lg leading-relaxed max-w-lg mx-auto"
+                            >
+                                {currentMessage.message}
+                            </p>
 
                             {/* Loading animation */}
                             <div className="mt-8 flex flex-col items-center">
@@ -108,9 +144,7 @@ function ProductList() {
                                 </div>
 
                                 <p className="text-[#A4B3B6] text-sm mt-4">
-                                    {loadingStage === 1
-                                        ? "Preparing everything for you..."
-                                        : "Just a few more seconds..."}
+                                    {currentMessage.status}
                                 </p>
 
                             </div>
