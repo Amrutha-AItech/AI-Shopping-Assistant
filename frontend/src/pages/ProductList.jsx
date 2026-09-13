@@ -9,10 +9,15 @@ function ProductList() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [loadingStage, setLoadingStage] = useState(1);
 
     const BASEURL = import.meta.env.VITE_DJANGO_BASE_URL;
 
     useEffect(() => {
+        const stageTimer = setTimeout(() => {
+            setLoadingStage(2);
+        }, 4000);
+
         fetch(`${BASEURL}/api/products/`)
             .then((response) => {
                 if (!response.ok) {
@@ -29,95 +34,144 @@ function ProductList() {
                 setError(error.message);
                 setLoading(false);
             });
+
+        return () => clearTimeout(stageTimer);
     }, [BASEURL]);
 
     if (loading) {
-    return (
-        <div className="min-h-screen bg-[#C0E9ED] pt-24 pb-12">
+        return (
+            <div className="min-h-screen bg-[#C0E9ED] pt-24 pb-12">
 
-            {/* Loading Hero */}
-            <div className="max-w-7xl mx-auto px-6 mb-12">
-                <div className="relative overflow-hidden bg-[#2A1B3D] rounded-3xl shadow-2xl min-h-[420px] flex items-center justify-center">
+                {/* Loading Hero */}
+                <div className="max-w-7xl mx-auto px-6 mb-12">
 
-                    {/* Animated glow */}
-                    <div className="absolute w-72 h-72 bg-[#D83F87]/20 rounded-full blur-3xl animate-pulse" />
+                    <div className="relative overflow-hidden bg-[#2A1B3D] rounded-3xl shadow-2xl min-h-[420px] flex items-center justify-center">
 
-                    <div className="relative z-10 text-center px-6">
+                        {/* Animated glow */}
+                        <div className="absolute w-72 h-72 bg-[#D83F87]/20 rounded-full blur-3xl animate-pulse" />
 
-                        <div className="inline-flex items-center gap-3 mb-6">
-                            <div className="w-3 h-3 bg-[#D83F87] rounded-full animate-pulse" />
-                            <p className="text-sm font-semibold tracking-[0.25em] text-[#E98074] uppercase">
-                                AI-Powered Shopping
-                            </p>
-                        </div>
+                        <div className="relative z-10 text-center px-6">
 
-                        <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
-                            Preparing your
-                            <br />
-                            shopping experience...
-                        </h1>
+                            <div className="inline-flex items-center gap-3 mb-6">
 
-                        <p className="text-[#A4B3B6] mt-5 text-base md:text-lg">
-                            Your products are loading. Just a moment.
-                        </p>
+                                <div className="w-3 h-3 bg-[#D83F87] rounded-full animate-pulse" />
 
-                        {/* Loading animation */}
-                        <div className="flex justify-center gap-2 mt-8">
-                            <span className="w-2.5 h-2.5 bg-[#D83F87] rounded-full animate-bounce" />
-                            <span
-                                className="w-2.5 h-2.5 bg-[#E98074] rounded-full animate-bounce"
-                                style={{ animationDelay: "150ms" }}
-                            />
-                            <span
-                                className="w-2.5 h-2.5 bg-[#FAD9D5] rounded-full animate-bounce"
-                                style={{ animationDelay: "300ms" }}
-                            />
+                                <p className="text-sm font-semibold tracking-[0.25em] text-[#E98074] uppercase">
+                                    AI-Powered Shopping
+                                </p>
+
+                            </div>
+
+                            {loadingStage === 1 ? (
+                                <>
+                                    <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+                                        ✨ Getting your
+                                        <br />
+                                        shopping experience ready
+                                    </h1>
+
+                                    <p className="text-[#A4B3B6] mt-5 text-base md:text-lg leading-relaxed max-w-lg mx-auto">
+                                        Loading products and connecting to your
+                                        shopping assistant...
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+                                        🛍️ Almost there...
+                                    </h1>
+
+                                    <p className="text-[#A4B3B6] mt-5 text-base md:text-lg leading-relaxed max-w-lg mx-auto">
+                                        Your AI-powered shopping experience is
+                                        loading.
+                                    </p>
+                                </>
+                            )}
+
+                            {/* Loading animation */}
+                            <div className="mt-8 flex flex-col items-center">
+
+                                <div className="flex justify-center gap-2">
+
+                                    <span className="w-2.5 h-2.5 bg-[#D83F87] rounded-full animate-bounce" />
+
+                                    <span
+                                        className="w-2.5 h-2.5 bg-[#E98074] rounded-full animate-bounce"
+                                        style={{ animationDelay: "150ms" }}
+                                    />
+
+                                    <span
+                                        className="w-2.5 h-2.5 bg-[#FAD9D5] rounded-full animate-bounce"
+                                        style={{ animationDelay: "300ms" }}
+                                    />
+
+                                </div>
+
+                                <p className="text-[#A4B3B6] text-sm mt-4">
+                                    {loadingStage === 1
+                                        ? "Preparing everything for you..."
+                                        : "Just a few more seconds..."}
+                                </p>
+
+                            </div>
+
                         </div>
 
                     </div>
+
                 </div>
-            </div>
 
 
-            {/* Product Skeletons */}
-            <div className="max-w-7xl mx-auto px-6">
+                {/* Product Skeletons */}
+                <div className="max-w-7xl mx-auto px-6">
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-                    {[1, 2, 3, 4].map((item) => (
-                        <div
-                            key={item}
-                            className="bg-white rounded-2xl shadow-sm p-4 animate-pulse"
-                        >
-                            {/* Image skeleton */}
-                            <div className="h-56 rounded-xl bg-slate-200" />
+                        {[1, 2, 3, 4].map((item) => (
 
-                            {/* Text skeleton */}
-                            <div className="pt-4">
-                                <div className="h-5 bg-slate-200 rounded w-3/4" />
+                            <div
+                                key={item}
+                                className="bg-white rounded-2xl shadow-sm p-4 animate-pulse"
+                            >
 
-                                <div className="flex items-center justify-between mt-4">
-                                    <div className="h-5 bg-slate-200 rounded w-20" />
-                                    <div className="h-4 bg-slate-200 rounded w-24" />
+                                {/* Image skeleton */}
+                                <div className="h-56 rounded-xl bg-slate-200" />
+
+                                {/* Text skeleton */}
+                                <div className="pt-4">
+
+                                    <div className="h-5 bg-slate-200 rounded w-3/4" />
+
+                                    <div className="flex items-center justify-between mt-4">
+
+                                        <div className="h-5 bg-slate-200 rounded w-20" />
+
+                                        <div className="h-4 bg-slate-200 rounded w-24" />
+
+                                    </div>
+
                                 </div>
+
                             </div>
-                        </div>
-                    ))}
+
+                        ))}
+
+                    </div>
 
                 </div>
 
             </div>
-
-        </div>
-    );
-}
+        );
+    }
 
     if (error) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-[#C0E9ED]">
+
                 <p className="text-red-600 font-medium">
                     Error: {error}
                 </p>
+
             </div>
         );
     }
@@ -258,6 +312,7 @@ function ProductList() {
                     </div>
 
                 </div>
+
             </div>
 
 
@@ -275,10 +330,12 @@ function ProductList() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
                         {products.map((product) => (
+
                             <ProductCard
                                 key={product.id}
                                 product={product}
                             />
+
                         ))}
 
                     </div>
